@@ -30,10 +30,10 @@ Every classroom has a notes section in which the student can find the notes uplo
 ### 4. Profile 
 In the Profile section the user can get his or her details. From this section the student can also submit the request for withdrawl or change in personal information.
 
-#### 5. Analysis 
+### 5. Analysis 
 In the Analysis section the user can get his/her Analysis based on the year/semester with details like assignment and test scores.
 
-## 6. Notice 
+### 6. Notice 
 In the Notice section the user can get the lastest news and updates.
 
 ---
