@@ -39,4 +39,4 @@ In the Notice section the user can get the lastest news and updates.
 ---
 ### Creators
 * Yash Khaitan, 211138
-* VAIDIK JAIDEO BHONGADE, 211135
+* Vaidik Jaideo Bhongade, 211135
