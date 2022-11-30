@@ -136,9 +136,10 @@ class Classroom{
 
 class Admin{};
 
-
-Student registerNewStudent(string first_name,string last_name,string pass,map<int,Student> &students);
-Teacher registerNewTeacher(string first_name,string last_name,string pass,map<int,Teacher> &teachers);
+Admin registerNewAdmin(string admin_name, string email, string password);
+Classroom createNewClassroom(string class_name,int id,map<int,Classroom> &classrooms,string n);
+Classroom joinNewClassroom(int class_code,Student student,map<int,Classroom> &classrooms);
+void createFile(string file_name);
 
 class AppManager{};
 
