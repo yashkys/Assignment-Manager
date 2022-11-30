@@ -49,7 +49,7 @@ class Student{
         }
 
         friend ofstream& operator << (ofstream& fout, Student &student);
-        friend ifstream& operator << (ifstream& fin, Student &student);
+        friend ifstream& operator >> (ifstream& fin, Student &student);
         friend ofstream& operator << (ofstream& cout, Student &student);
         
         ~Student(){};
@@ -63,6 +63,8 @@ class Teacher{
         string password;
     
     public:
+        vector<int> classroom_created;
+
         Teacher(){ }
         Teacher(int ID, string name, string email, string password);
 
@@ -100,9 +102,8 @@ class Teacher{
         }
 
         friend ofstream& operator << (ofstream& fout, Teacher &teacher);
-        friend ifstream& operator << (ifstream& fin, Teacher &teacher);
+        friend ifstream& operator >> (ifstream& fin, Teacher &teacher);
         friend ofstream& operator << (ofstream& cout, Teacher &teacher);
-        
         ~Teacher(){};
 
 };
@@ -134,7 +135,38 @@ class Classroom{
 
 };
 
-class Admin{};
+class Admin{
+    private:
+        map<int,Teacher> teachers;
+        map<int,Student> students;
+        string name; /* school/university */
+        string email;
+        string password;
+        string domain_address;
+    
+    public:
+        Admin(){ }
+        Admin(string admin_name, string email, string password);
+
+        map<int,Student>getStudentList(){ return students; }
+        map<int,Teacher> getTeacherList(){ return teachers; }
+        string getName(){ return name; }
+        string getEmail(){ return email; }
+        string getPassword(){ return password; }
+        string getDomainAddress(){
+            string domain_address = email;
+            int pos = domain_address.find("@");
+            domain_address = domain_address.substr(pos + 1);
+            pos = domain_address.find(".");
+            domain_address = domain_address.substr(0,pos);
+            return domain_address;
+        }
+
+        friend ofstream& operator << (ofstream& fout, Admin &admin);
+        friend ifstream& operator >> (ifstream& fin, Admin &admin);
+        friend ostream& operator << (ostream& cout, Admin &admin);
+        ~Admin(){};
+};
 
 Admin registerNewAdmin(string admin_name, string email, string password);
 Classroom createNewClassroom(string class_name,int id,map<int,Classroom> &classrooms,string n);
@@ -182,45 +214,106 @@ Student registerNewStudent(int roll_number, string name, string email, string pa
 //friend
 ofstream& operator << (ofstream& fout, Student &student){
     fout<<student.roll_number<<endl;
-    fout<<student.first_name<<endl;
-    fout<<student.last_name<<endl;
-    fout<<student.pass<<endl;
+    fout<<student.name<<endl;
+    fout<<student.email<<endl;
+    fout<<student.password<<endl;
     return fout;
 }
 
 ifstream& operator >> (ifstream& fin, Student &student){
     fin>>student.roll_number;
-    fin>>student.first_name;
-    fin>>student.last_name;
-    fin>>student.pass;
+    fin>>student.name;
+    fin>>student.email;
+    fin>>student.password;
     return fin;
 }
 
 ostream& operator << (ostream& cout, Student &student){
-    cout<<"\tRoll Number.: "<<student.roll_number<<endl;
-    cout<<"\tName.: "<<student.first_name<<" "<<student.last_name<<endl;
+    cout<<"\tRoll Number.: "<<student.getRollNumber()<<endl;
+    cout<<"\tName.: "<<student.getName()<<endl;
     return cout;
 }
 
 
 ofstream& operator << (ofstream& fout, Teacher &teacher){
-    fout<<teacher.id<<endl;
-    fout<<teacher.first_name<<endl;
-    fout<<teacher.last_name<<endl;
-    fout<<teacher.pass<<endl;
+    fout<<teacher.ID<<endl;
+    fout<<teacher.name<<endl;
+    fout<<teacher.email<<endl;
+    fout<<teacher.password<<endl;
     return fout;
 }
 
 ifstream& operator >> (ifstream& fin, Teacher &teacher){
-    fin>>teacher.id;
-    fin>>teacher.first_name;
-    fin>>teacher.last_name;
-    fin>>teacher.pass;
+    fin>>teacher.ID;
+    fin>>teacher.name;
+    fin>>teacher.email;
+    fin>>teacher.password;
     return fin;
 }
 
 ostream& operator << (ostream& cout, Teacher &teacher){
-    cout<<"\tID Number.: "<<teacher.id<<endl;
-    cout<<"\tName.: "<<teacher.first_name<<" "<<teacher.last_name<<endl;
+    cout<<"\tID Number.: "<<teacher.getID()<<endl;
+    cout<<"\tName.: "<<teacher.getName()<<endl;
+    return cout;
+}
+
+ofstream& operator << (ofstream& fout, Classroom &classroom){
+    fout<<classroom.class_code<<endl;
+    fout<<classroom.class_name<<endl;
+    fout<<classroom.teacher_id<<endl;
+    fout<<classroom.notice<<endl;
+    fout<<classroom.students_joined.size()<<endl;
+    for(int i=0;i<classroom.students_joined.size();i++){
+        fout<<classroom.students_joined[i]<<endl;
+    }
+    return fout;
+}
+
+ifstream& operator >> (ifstream& fin, Classroom &classroom){
+    int tempID,n;
+    fin>>classroom.class_code;
+    fin>>classroom.class_name;
+    fin>>classroom.teacher_id;
+    fin>>classroom.notice;
+    fin>>n;
+    for(int i=0;i<n;i++){
+        fin>>tempID;
+        classroom.students_joined.push_back(tempID);
+    }
+    return fin;
+}
+
+ostream& operator << (ostream& cout, Classroom &classroom){
+    cout<<"Classroom name is "<<classroom.class_name<<endl;
+    cout<<"Classroom code: "<<classroom.class_code<<endl;
+    cout<<"Classroom's teacher id: "<<classroom.teacher_id<<endl;
+    cout<<"Student roll Number who have joined:\n";
+    for(int i=0;i<classroom.students_joined.size();i++){
+        cout<<classroom.students_joined[i]<<endl;
+    }
+    return cout;
+}
+
+ofstream& operator << (ofstream& fout, Admin &admin){
+    fout<<admin.name<<endl;
+    fout<<admin.email<<endl;
+    fout<<admin.password<<endl;
+    fout<<admin.domain_address<<endl;
+    return fout;
+}
+
+ifstream& operator >> (ifstream& fin, Admin &admin){
+    fin>>admin.name;
+    fin>>admin.email;
+    fin>>admin.password;
+    fin>>admin.domain_address;
+    return fin;
+}
+
+ostream& operator << (ostream& cout, Admin &admin){
+    cout<<"School/University name  : "<<admin.name<<endl;
+    cout<<"Email : "<<admin.email<<endl;
+    cout<<"Number of teachers : "<<(admin.teachers).size()<<endl;
+    cout<<"Number of students : "<<(admin.students).size()<<endl;
     return cout;
 }
