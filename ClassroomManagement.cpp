@@ -178,3 +178,49 @@ Student registerNewStudent(int roll_number, string name, string email, string pa
     fout.close();
     return student;
 }
+
+//friend
+ofstream& operator << (ofstream& fout, Student &student){
+    fout<<student.roll_number<<endl;
+    fout<<student.first_name<<endl;
+    fout<<student.last_name<<endl;
+    fout<<student.pass<<endl;
+    return fout;
+}
+
+ifstream& operator >> (ifstream& fin, Student &student){
+    fin>>student.roll_number;
+    fin>>student.first_name;
+    fin>>student.last_name;
+    fin>>student.pass;
+    return fin;
+}
+
+ostream& operator << (ostream& cout, Student &student){
+    cout<<"\tRoll Number.: "<<student.roll_number<<endl;
+    cout<<"\tName.: "<<student.first_name<<" "<<student.last_name<<endl;
+    return cout;
+}
+
+
+ofstream& operator << (ofstream& fout, Teacher &teacher){
+    fout<<teacher.id<<endl;
+    fout<<teacher.first_name<<endl;
+    fout<<teacher.last_name<<endl;
+    fout<<teacher.pass<<endl;
+    return fout;
+}
+
+ifstream& operator >> (ifstream& fin, Teacher &teacher){
+    fin>>teacher.id;
+    fin>>teacher.first_name;
+    fin>>teacher.last_name;
+    fin>>teacher.pass;
+    return fin;
+}
+
+ostream& operator << (ostream& cout, Teacher &teacher){
+    cout<<"\tID Number.: "<<teacher.id<<endl;
+    cout<<"\tName.: "<<teacher.first_name<<" "<<teacher.last_name<<endl;
+    return cout;
+}
