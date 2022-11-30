@@ -107,7 +107,30 @@ class Teacher{
 
 };
 
-class Classroom{};
+class Classroom{
+    private:
+        string class_name;
+        int class_code;
+        int teacher_id;             // teacher's id
+        string notice;
+    public :
+        vector<int> students_joined;
+
+        Classroom(){ };
+        Classroom(string class_name, int class_code, int teacher_id, string notice);
+
+        string getClassName(){ return class_name; }
+        int getClassCode(){ return class_code; }
+        int getID(){ return teacher_id; }
+        string getNotice(){ return notice; }
+        void setNotice(string new_notice){ notice = new_notice; }
+
+        friend ofstream& operator << (ofstream& fout, Classroom &classroom);
+        friend ifstream& operator >> (ifstream& fin, Classroom &classroom);
+        friend ostream& operator << (ostream& cout, Classroom &classroom);
+        ~Classroom(){};
+
+};
 
 class Admin{};
 
