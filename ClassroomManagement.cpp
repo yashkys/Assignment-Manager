@@ -132,7 +132,38 @@ class Classroom{
 
 };
 
-class Admin{};
+class Admin{
+    private:
+        map<int,Teacher> teachers;
+        map<int,Student> students;
+        string name; /* school/university */
+        string email;
+        string password;
+        string domain_address;
+    
+    public:
+        Admin(){ }
+        Admin(string admin_name, string email, string password);
+
+        map<int,Student>getStudentList(){ return students; }
+        map<int,Teacher> getTeacherList(){ return teachers; }
+        string getName(){ return name; }
+        string getEmail(){ return email; }
+        string getPassword(){ return password; }
+        string getDomainAddress(){
+            string domain_address = email;
+            int pos = domain_address.find("@");
+            domain_address = domain_address.substr(pos + 1);
+            pos = domain_address.find(".");
+            domain_address = domain_address.substr(0,pos);
+            return domain_address;
+        }
+
+        friend ofstream& operator << (ofstream& fout, Admin &admin);
+        friend ifstream& operator >> (ifstream& fin, Admin &admin);
+        friend ostream& operator << (ostream& cout, Admin &admin);
+        ~Admin(){};
+};
 
 class AppManager{};
 
