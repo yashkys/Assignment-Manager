@@ -137,8 +137,43 @@ class Classroom{
 class Admin{};
 
 
+Student registerNewStudent(string first_name,string last_name,string pass,map<int,Student> &students);
+Teacher registerNewTeacher(string first_name,string last_name,string pass,map<int,Teacher> &teachers);
+
 class AppManager{};
 
 int main(){
 
+}
+
+Teacher registerNewTeacher(int ID, string name, string email, string password, map<int,Teacher> &teachers){
+    Teacher teacher(ID, name, email, password);
+    teachers.insert(pair<int,Teacher>(teacher.getID(),teacher));
+    ofstream fout;
+    string file_name = "Teachers_" + teacher.getDomainAddress() + ".data";
+    fout.open(file_name,ios::app);
+    if(!fout.is_open()){throw 101;}
+    fout<<teacher;
+    fout.close();
+    cout<<"\n\t***Account Successfully Created***\n";
+    cout<<"Here is your information\n";
+    cout<<teacher;
+    return teacher;
+}
+
+Student registerNewStudent(int roll_number, string name, string email, string password, map<int,Student> &students){
+    Student student(roll_number, name, email, password);
+    students.insert(pair<int,Student>(student.getRollNumber(),student));
+    ofstream fout;
+    string file_name = "Students_" + student.getDomainAddress() + ".data";
+    fout.open(file_name,ios::app);
+    if(!fout.is_open()){throw 101;}
+    fout << student;
+    fout.close();
+    cout << "\n\t***Account Successfully Created***\n";
+    cout << "Here is your information\n";
+    cout << student;
+    cout << END_LINE << endl;
+    fout.close();
+    return student;
 }
