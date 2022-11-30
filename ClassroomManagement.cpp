@@ -107,8 +107,6 @@ class Teacher{
         ~Teacher(){};
 
 };
-Student registerNewStudent(string first_name,string last_name,string pass,map<int,Student> &students);
-Teacher registerNewTeacher(string first_name,string last_name,string pass,map<int,Teacher> &teachers);
 
 class Classroom{
     private:
@@ -168,6 +166,8 @@ class Admin{
         ~Admin(){};
 };
 
+Student registerNewStudent(string first_name,string last_name,string pass,map<int,Student> &students);
+Teacher registerNewTeacher(string first_name,string last_name,string pass,map<int,Teacher> &teachers);
 Admin registerNewAdmin(string admin_name, string email, string password);
 Classroom createNewClassroom(string class_name,int id,map<int,Classroom> &classrooms,string n);
 Classroom joinNewClassroom(int class_code,Student student,map<int,Classroom> &classrooms);
@@ -210,6 +210,42 @@ Student registerNewStudent(int roll_number, string name, string email, string pa
     fout.close();
     return student;
 }
+Admin registerNewAdmin(string admin_name, string email, string password){
+    Admin admin(admin_name, email, password);
+    ofstream fout;
+    string file_name = "Admins.data";
+    fout.open(file_name,ios::app);
+    if(!fout.is_open()){throw 101;}
+    fout << admin;
+    fout.close();
+    cout << "\n\t***Account Successfully Created***\n";
+    cout << "Here is your information\n";
+    cout << admin;
+    cout << END_LINE << endl;
+    fout.close();
+
+    string file_name = "student_" + admin.getDomainAddress() + ".txt" ;
+    createFile(file_name);
+    file_name = "teacher_" + admin.getDomainAddress() + ".txt" ;
+    createFile(file_name);
+    file_name = "classroom_" + admin.getDomainAddress() + ".txt" ;
+    createFile(file_name);
+    cout << "Admin added successfully.\n";
+
+    return admin;
+}
+void createFile(string file_name){
+    fstream file;
+    file.open(file_name,ios::out);
+    if(!file)
+    {
+        cout<<"Error in creating "<< file_name<<" file!!!\n";
+        return;
+    }
+    cout<<file_name<<" created successfully.\n";
+    file.close();
+}
+
 
 //friend
 ofstream& operator << (ofstream& fout, Student &student){
