@@ -12,6 +12,8 @@ class Student{
         string password;
     
     public:
+        vector<int> classroom_joined;
+
         Student(){ }
         Student(int roll_number, string name, string email, string password);
 
@@ -159,6 +161,20 @@ class Admin{
             domain_address = domain_address.substr(0,pos);
             return domain_address;
         }
+        void printListOfStudents(){
+            map<int,Student>::iterator itr;
+            for(itr = students.begin(); itr != students.end(); ++itr){
+                cout<<itr->second;
+                cout<<endl;
+            }
+        }
+        void printListOfTeachers(){
+            map<int,Teacher>::iterator itr;
+            for(itr = teachers.begin(); itr != teachers.end(); ++itr){
+                cout<<itr->second;
+                cout<<endl;
+            }
+        }
 
         friend ofstream& operator << (ofstream& fout, Admin &admin);
         friend ifstream& operator >> (ifstream& fin, Admin &admin);
@@ -172,11 +188,218 @@ Admin registerNewAdmin(string admin_name, string email, string password);
 Classroom createNewClassroom(string class_name,int id,map<int,Classroom> &classrooms,string n);
 Classroom joinNewClassroom(int class_code,Student student,map<int,Classroom> &classrooms);
 void createFile(string file_name);
+void logedInAsStudent(Student &student,map<int,Classroom> &classrooms); //TODO
+void logedInAsTeacher(Teacher &teacher,map<int,Classroom> &classrooms); //TODO
+void EnterClassroomAsStudent(Student &student,map<int,Classroom> &classrooms);
+void EnterClassroomAsTeacher(Teacher &teacher,map<int,Classroom> &classrooms);
+void SaveAllchanges(map<int,Student> &students,map<int,Teacher> &teachers,map<int,Classroom> &classrooms);
 
-class AppManager{};
+class AppManager{
+    private:
+        int choice;
+        Student student;
+        Teacher teacher;
+        Classroom classroom;
+        Admin admin;
+        map<int,Student>students;
+        map<int,Teacher>teachers;
+        map<int,Classroom>classrooms;
+        map<int,Student>::iterator itr_student;
+        map<int,Teacher>::iterator itr_teacher;
+        map<int,Classroom>::iterator itr_classroom;
+        ofstream fout;
+        ifstream fin;
+        string name,email,password,class_name,str;
+        int roll_number,id,class_code;
+    
+    public:
+    AppManager(){ startActivity(); }
+
+    private:
+        void startActivity(){
+            while(1){
+                cout << END_LINE << endl;
+                cout << "\t1. Login\n\t2. Signup \n\t3. Quit\n";
+                int option;
+                cin >> option;
+                switch (option)
+                {
+                    case 1: /*Login*/
+                        loginActivity();
+                        break;
+                    
+                    case 2: /*Signup*/
+                        signupActivity();
+                        break;
+
+                    case 3: /*Quit*/
+                        return;
+                        break;
+                    
+                    default:
+                        cout << "Wrong choice.\n";
+                        break;
+                }
+            }
+        }
+        void signupActivity(){
+            int option;
+            try{
+                while(1){
+                    cout << END_LINE << endl;
+                    cout << "1. Signup as Admin\n";
+                    cout << "2. Back\n";
+                    cout << "Choose from above : ";
+                    cin >> option;
+                    switch (option)
+                    {
+                        case 1: /*Admin Signup*/
+                            cout << "Enter name of school/university: ";
+                            getline(cin,name);
+                            getline(cin,name);
+                            cout << "Enter email : ";
+                            getline(cin,email);
+                            cout << "Enter password : ";
+                            getline(cin,password);
+                            admin = registerNewAdmin(name,email,password);
+                            break;
+                        
+                        case 2 : /*Back*/
+                            return;
+                            break;
+                        
+                        default:
+                            cout << "Wrong Choice.\n";
+                            break;
+                    }
+                }
+            }catch(int e){
+                if(e==101)
+                    cout<<"\t!!!File Error!!! "<<e;
+            }
+            catch(...){
+                cout<<"\t!!!Somthing Went wrong!!!";
+            }
+        }
+        void loginActivity(){
+            int option;
+            try{
+                while(1){
+                    cout << "-----------------------------------------------------------------------------------------------\n";
+                    cout << "Login as \n";
+                    cout << "\t1. Admin \n";
+                    cout << "\t2. Teacher \n";
+                    cout << "\t3. Student.\n" ;
+                    cout << "\t4. Back.\n" ;
+                    cout << "Enter : ";
+                    cin >> option;
+                    string file_name;
+                    switch(option)
+                    {
+                        case 1: /*LogIn as Admin */
+                            cout << "Enter email : ";
+                            getline(cin,email);
+                            cout << "Enter password : ";
+                            getline(cin,password);
+                            file_name = "Admins_" + getDomainAddress(email) + ".data";
+                            fin.open("Teachers.data");
+                            while(!fin.eof()){
+                                fin>>admin;
+                                if(admin.getEmail() == email && admin.getPassword() == password){
+                                    loggedInAsAdmin(admin,students,teachers);
+                                    break;
+                                }
+                            }
+                            fin.close();
+                            SaveAllchanges(students,teachers,classrooms);
+                            break;
+                            
+                        case 2 : /*LogIn as Teacher */
+                            cout << "Enter ID : ";
+                            getline(cin,str);
+                            id = stoi(str);
+                            cout << "Enter password : ";
+                            getline(cin,password);
+                            if((teachers[id]).getPassword()==password){     
+                                loggedInAsTeacher(teachers[id],classrooms);
+                            }
+                            else{
+                                cout<<"\n\t!Wrong ID or Password!\n";
+                            }
+                            SaveAllchanges(students,teachers,classrooms);
+                            break;
+
+                        case 3: /*LogIn as Student */
+                            cout << "Enter roll number : ";
+                            getline(cin,str);
+                            roll_number = stoi(str);
+                            cout << "Enter password : ";
+                            getline(cin,password);
+                            if((students[roll_number]).getPassword()==password){   
+                                loggedInAsStudent(students[roll_number],classrooms);
+                            }
+                            else{
+                                cout<<"\n\t!Wrong Roll Number or Password!\n";
+                            }
+                            SaveAllchanges(students,teachers,classrooms);
+                            break;
+
+                        case 4: /*Back to StartActivity*/
+                            return;
+                            break;
+                        
+                        default:
+                            break;
+                    }
+                }
+            }catch(int e){
+                if(e==101)
+                    cout<<"\t!!!File Error!!! "<<e;
+            }
+            catch(...){
+                cout<<"\t!!!Somthing Went wrong!!!";
+            }
+        }
+        string getDomainAddress(string email){
+            string domain_address = email;
+            int pos = domain_address.find("@");
+            domain_address = domain_address.substr(pos + 1);
+            pos = domain_address.find(".");
+            domain_address = domain_address.substr(0,pos);
+            return domain_address;
+        }
+};
+
+Student::Student(int roll_number, string name, string email, string password){
+    this->roll_number = roll_number;
+    this->name = name;
+    this->email = email;
+    this->password;
+}
+
+Teacher::Teacher(int ID, string name, string email, string password){
+    this->ID = ID;
+    this->name = name;
+    this->email = email;
+    this->password;
+}
+
+Admin::Admin(string admin_name, string email, string password){
+    this->name = admin_name;
+    this->email = email;
+    this->password = password;
+    this->domain_address = getDomainAddress();
+}
+
+Classroom::Classroom(string class_name, int class_code, int teacher_id, string notice){
+    this->class_name = class_name;
+    this->teacher_id = teacher_id;
+    this->notice = notice;
+    this->class_code = class_code;
+}
 
 int main(){
-
+    AppManager am;
 }
 
 Teacher registerNewTeacher(int ID, string name, string email, string password, map<int,Teacher> &teachers){
@@ -245,7 +468,256 @@ void createFile(string file_name){
     cout<<file_name<<" created successfully.\n";
     file.close();
 }
+void loggedInAsAdmin(Admin& admin, map<int,Student> &students, map<int,Teacher> &teachers){
+    Student student;
+    Teacher teacher;
+    string str;
+    int id,roll_number;
+    cout << END_LINE << endl;
+    cout<<"\n\t***Loged In Successfully***\n";
+        int choose;
+        while(1){
+            cout << "--------------------------------------------------------------\n";
+            cout<<"1.\tAdd new Student\n";
+            cout<<"2.\tAdd new Teacher\n";
+            cout<<"3.\tPrint Teacher's List\n";
+            cout<<"4.\tPrint Student's List\n";
+            cout<<"5.\tLog Out\n";
+            cout<<"Choose from above: ";
+            cin>>choose;
+            string name, email, password;
+            int roll_number;            
+            int ID;
+            switch (choose)
+            {
+                case 1:
+                    cout << "Enter name : ";
+                    getline(cin,name);
+                    cout << "Enter roll number : ";
+                    getline(cin,str);
+                    roll_number = stoi(str);
+                    cout << "Enter email : ";
+                    getline(cin,email);
+                    cout << "Enter password : ";
+                    getline(cin,password);
+                    // cin >> student;
+                    student = registerNewStudent(roll_number,name,email,password,students); //int roll_number, string name, string email, string password, map<int,Student> &students
+                    break;
+                case 2:
+                    cout << "Enter name : ";
+                    getline(cin,name);
+                    cout << "Enter ID : ";
+                    getline(cin,str);
+                    ID = stoi(str);
+                    cout << "Enter email : ";
+                    getline(cin,email);
+                    cout << "Enter password : ";
+                    getline(cin,password);
+                    teacher = registerNewTeacher(ID,name,email,password,teachers);
+                    break;
+                case 3 :
+                    admin.printListOfTeachers();
+                    break;
+                case 4 :
+                    admin.printListOfStudents();
+                    break;
+                case 5 :
+                    cout<<"Log Out\n";
+                    return;
+                default:
+                    cout<<"Looks like you made a mistake. Please try again\n\n";
+            }
+        }
 
+}
+void loggedInAsTeacher(Teacher &teacher,map<int,Classroom> &classrooms){
+    cout << END_LINE << endl;
+    int choose,class_code;
+    string class_name,first_name,last_name,notice;
+    Classroom classroom;
+    map<int,Classroom>::iterator itr3;
+    cout<<"\n\t***Loged In Successfully***\n";
+    cout<<"Welcome, "<<teacher.getName()<<"\n";
+    while(1){
+        cout<<"1.\tView my profile\n";
+        cout<<"2.\tView all Classrooms\n";
+        cout<<"3.\tEnter in classroom\n";
+        cout<<"4.\tCreate new classroom\n";
+        cout<<"5.\tLog Out\n";
+        cout<<"Choose from above: ";
+        cin>>choose;
+        switch (choose)
+        {
+        case 1:
+            cout<<teacher;
+            break;
+        case 2:
+            cout<<"Displaying all the classroom created: \n";
+            for(itr3=classrooms.begin();itr3!=classrooms.end();itr3++)
+            {
+                if ((itr3->second).getID() == teacher.getID()){
+                    cout<<(itr3->first)<<"  "<<(itr3->second).getClassName()<<endl;
+                }
+            }
+            cout<<endl;
+            break;
+        case 3:
+            EnterClassroomAsTeacher(teacher,classrooms);
+            break;
+        case 4:
+            cout<<"Enter the name of new Classroom: ";
+            cin>>class_name;
+            cout<<"Enter the notice: ";
+            cin>>notice;
+            classroom=createNewClassroom(class_name,teacher.getID(),classrooms,notice);
+            break;
+        case 5:
+            cout<<"Loging Out\n";
+            return;
+        default:
+            cout<<"Looks like you made a mistake. Please try again\n\n";
+        }
+    }
+}
+void loggedInAsStudent(Student &student,map<int,Classroom> &classrooms){
+    cout << END_LINE << endl;
+    int choose,class_code;
+    string first_name,last_name;
+    Classroom classroom;
+    map<int,Classroom>::iterator itr3;
+    cout<<"\n\t***Loged In Successfully***\n";
+    cout<<"Welcome, "<<student.getName()<<"\n";
+    while(1){
+        cout<<"1.\tView my profile\n";
+        cout<<"2.\tView all joined Classrooms\n";
+        cout<<"3.\tEnter in classroom\n";
+        cout<<"4.\tJoin new classroom\n";
+        cout<<"5.\tLog Out\n";
+        cout<<"Choose from above: ";
+        cin>>choose;
+        switch (choose)
+        {
+        case 1:
+            cout<<student;
+            break;
+        case 2:
+            cout<<"Displaying all the classroom joined:\n";
+            for(itr3=classrooms.begin();itr3!=classrooms.end();itr3++)
+            {
+                for(int i=0;i<(itr3->second).students_joined.size();i++){
+                    if ((itr3->second).students_joined[i] == student.getRollNumber()){
+                        cout<<(itr3->first)<<"  "<<(itr3->second).getClassName()<<endl;
+                    }
+                }
+            }
+            cout<<endl;
+            break;
+        case 3:
+            EnterClassroomAsStudent(student,classrooms);
+            break;
+        case 4:
+            cout<<"Enter the Class Code of new classroom: ";
+            cin>>class_code;
+            if(classrooms.find(class_code) == classrooms.end()){
+                cout<<"Classroom not present\n";
+            }
+            else{
+                classroom = joinNewClassroom(class_code,student,classrooms);
+                student.classroom_joined.push_back(classroom.getClassCode());
+                cout<<"You have joined the classroom succeddfully\n";
+                cout<<"Here is the info of this classroom:\n";
+                cout<<classroom;
+            }
+            break;
+        case 5:
+            cout<<"Loging Out\n";
+            return;
+        default:
+            cout<<"Looks like you made a mistake. Please try again\n\n";
+        }
+    }
+}
+void EnterClassroomAsStudent(Student &student,map<int,Classroom> &classrooms){
+    int class_code,flag=0;
+    cout<<"Enter the code of classroom you want to enter\n";
+    cin>>class_code;
+    if(classrooms.find(class_code) == classrooms.end()){
+        cout<<"Classroom not present\n";
+        return;
+    }
+    vector<int> studentsJoined = (classrooms[class_code]).students_joined;
+    for(int i=0;i<studentsJoined.size();i++){
+        if(studentsJoined[i] == student.getRollNumber()){
+            flag=1;break;
+        }
+    }
+    if(flag==0){
+        cout<<"You haven't joined it this classroom yet\n";
+        return;
+    }
+    cout<<"Here is your classroom: \n";
+    cout<<classrooms[class_code];
+    cout<<"\nAnd the current notice is:\n";
+    cout<<classrooms[class_code].getNotice();
+}
+void EnterClassroomAsTeacher(Teacher &teacher,map<int,Classroom> &classrooms){
+    int class_code;
+    char choice;
+    string newNotice;
+    cout<<"Enter the code of classroom you want to enter\n";
+    cin>>class_code;
+    if(classrooms.find(class_code) == classrooms.end()){
+        cout<<"Classroom not present\n";
+        return;
+    }
+    if(classrooms[class_code].getID() != teacher.getID()){
+        cout<<"You are not authorized to enter this classroom\n";
+        return;
+    }
+    cout<<"Here is your classroom: \n";
+    cout<<classrooms[class_code];
+    cout<<"\nAnd the current notice is:\n";
+    cout<<classrooms[class_code].getNotice();
+    cout<<"\nDo you want to edit it? (Yes -> Y): ";
+    cin>>choice;
+    if(choice == 'Y'){
+        cout<<"Enter the new notice\n";
+        cin>>newNotice;
+        classrooms[class_code].setNotice(newNotice);
+        cout<<"Notice Updated\n";
+    }
+}
+void SaveAllchanges(map<int,Student> &students,map<int,Teacher> &teachers,map<int,Classroom> &classrooms){
+    map<int,Student>::iterator itr1;
+    map<int,Teacher>::iterator itr2;
+    map<int,Classroom>::iterator itr3;
+    itr1 = students.begin();
+    itr2 = teachers.begin();
+    itr3 = classrooms.begin();
+    ofstream fout;
+    string file_name = "Students_" + (itr1->second).getDomainAddress() + ".data";
+    fout.open(file_name, ios::trunc);
+    for(itr1=students.begin();itr1!=students.end();itr1++)
+    {
+      fout<<itr1->second;
+    }
+    fout.close();
+    file_name = "Teachers_" + (itr1->second).getDomainAddress() + ".data";
+    fout.open(file_name, ios::trunc);
+    for(itr2=teachers.begin();itr2!=teachers.end();itr2++)
+    {
+      fout<<itr2->second;
+    }
+    fout.close();
+    file_name = "Classrooms_" + (itr1->second).getDomainAddress() + ".data";
+    fout.open(file_name, ios::trunc);
+    map<int,Classroom>::iterator itr3;
+    for(itr3=classrooms.begin();itr3!=classrooms.end();itr3++)
+    {
+      fout<<itr3->second;
+    }
+    fout.close();
+}
 
 //friend
 ofstream& operator << (ofstream& fout, Student &student){
