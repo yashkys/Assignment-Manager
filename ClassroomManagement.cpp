@@ -175,55 +175,6 @@ class Admin{
             domain_address = domain_address.substr(0,pos);
             return domain_address;
         }
-        // void printListOfStudents(){
-        //     Student student;
-        //     string file_name = "Students_" + getDomainAddress() + ".data";
-        //     ifstream fin;
-        //     fin.open(file_name);
-        //     printf("%s\n",END_LINE);
-        //     printf("%s List of Students %s\n",HALF_END_LINE,HALF_END_LINE);
-        //     while(!fin.eof()){
-        //         fin>>student;
-        //         printf("Roll Number : %s\n",student.getRollNumber());
-        //         printf("Name : %s\n",(student.getName()).c_str());
-        //         printf("Email : %s\n",(student.getEmail()).c_str());
-        //         cout<<student;
-        //         // students.insert(pair<int,Student>(student.getRollNumber(),student));
-        //     }
-        //     fin.close();
-        //     printf("%s\n",END_LINE);
-            
-        //     // printf("%s\n",END_LINE);
-        //     // printf("%s List of Students %s\n",HALF_END_LINE,HALF_END_LINE);
-        //     // map<int,Student>::iterator itr1;
-        //     // for(itr1 = students.begin(); itr1!= students.end();itr1++){
-        //     //     cout<<(itr1->second);
-        //     // }
-        //     // printf("%s\n",END_LINE);
-
-        // }
-        // void printListOfTeachers(){
-        //     Teacher teacher;
-        //     string file_name = "Teachers_" + getDomainAddress() + ".data";
-        //     ifstream fin;
-        //     fin.open(file_name);
-        //     printf("%s\n",END_LINE);
-        //     printf("%s List of Teachers %s\n",HALF_END_LINE,HALF_END_LINE);
-        //     while(!fin.eof()){
-        //         fin>>teacher;
-        //         cout<<teacher;
-        //         // teachers.insert(pair<int,Teacher>(teacher.getID(),teacher));
-        //     }
-        //     fin.close();
-        //     printf("%s\n",END_LINE);
-        //     // printf("%s\n",END_LINE);
-        //     // printf("%s List of Teachers %s\n",HALF_END_LINE,HALF_END_LINE);
-        //     // map<int,Teacher>::iterator itr2;
-        //     // for(itr2 = teachers.begin(); itr2!= teachers.end();itr2++){
-        //     //     cout<<(itr2->second);
-        //     // }
-        //     // printf("%s\n",END_LINE);
-        // }
         void updateListOfStudents(Student& student){
             students.insert(pair<int,Student>(student.getRollNumber(),student));
         }
@@ -516,22 +467,6 @@ ostream& operator << (ostream& cout, Student &student){
     printf("\tEmail : %s\n",(student.getEmail()).c_str());
     return cout;
 }
-// istream& operator >> (ostream& cin, Student &student){
-//     string str;
-//     printf("Enter Name : ");
-//     getline(cin,student.name);
-//     // student.name = str;
-//     printf("Enter Roll Number : ");
-//     getline(cin,str);
-//     student.roll_number = stoi(str);
-//     printf("Enter Email : ");
-//     getline(cin,student.email);
-//     // student.email = str;
-//     printf("Enter Password : ");
-//     getline(cin,student.password);
-//     // student.password=str;
-//     return cin;
-// }
 
 //friend Teacher
 ofstream& operator << (ofstream& fout, Teacher &teacher){ 
@@ -798,26 +733,6 @@ void loggedInAsAdmin(Admin& admin, map<int,Student> &students, map<int,Teacher> 
     ifstream fin;
     Teacher teacher;
     Student student;
-    // string file_name = "Students_" + admin.getDomainAddress() + ".data";
-    // while(!fin.eof()){
-    //     fin>>student;
-    //     students.insert(pair<int,Student>(student.getRollNumber(),student));
-    // }
-    // fin.close();
-    // file_name = "Teachers_" + admin.getDomainAddress() + ".data";
-    // while(!fin.eof()){
-    //     fin>>teacher;
-    //     teachers.insert(pair<int,Teacher>(teacher.getID(),teacher));
-    // }
-    // fin.close();
-
-    // ifstream myfile;
-    // string myline;
-    // string file_name;
-    // map<int,Classroom>::iterator itr3;
-    // vector<Teacher> vec_teachers = admin.getTeacherList();
-    // vector<Student> vec_students = admin.getStudentList();
-    // myfile.open("Admins.data");
     printf("\t**Logged In Successfully**\n",END_LINE);
     int choose;
     while (1){
@@ -866,14 +781,6 @@ void loggedInAsAdmin(Admin& admin, map<int,Student> &students, map<int,Teacher> 
                 teacher = registerNewTeacher(name,email,password,teachers);
                 admin.updateListOfTeachers(teacher);
                 break;
-
-            // case 3:
-            //     admin.printListOfStudents();
-            //     break;
-
-            // case 4:
-            //     admin.printListOfTeachers();
-            //     break;
 
             case 3:
                 printf("%sLogged Out%s\n",HALF_END_LINE,HALF_END_LINE);
