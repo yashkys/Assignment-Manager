@@ -24,16 +24,10 @@ Registration can be done only if the email id for students and teachers are ente
 Every classroom is joined in the manner of Batch ( for example, batch 2021-25) which means the duration for student in the school or university.
 with the data such as subject , teacher and students.
 
-### 3. Notes 
-Every classroom has a notes section in which the student can find the notes uploaded by the teachers.
-
-### 4. Profile 
+### 3. Profile 
 In the Profile section the user can get his or her details. From this section the student can also submit the request for withdrawl or change in personal information.
 
-### 5. Analysis 
-In the Analysis section the user can get his/her Analysis based on the year/semester with details like assignment and test scores.
-
-### 6. Notice 
+### 4. Notice 
 In the Notice section the user can get the lastest news and updates.
 -----------------------------------
 
